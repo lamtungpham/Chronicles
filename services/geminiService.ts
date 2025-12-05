@@ -109,7 +109,7 @@ const responseSchema = {
     },
     illustrationPrompt: {
       type: Type.STRING,
-      description: "Detailed English prompt for image generation if a NEW scene/character appears. Null otherwise.",
+      description: "Detailed English prompt for image generation if a NEW scene/character appears. Avoid gory details, focus on artistic fantasy style. Null otherwise.",
       nullable: true
     },
     newItems: {
@@ -169,7 +169,7 @@ export const startGame = async (character: Character, settings: GameSettings): P
     4. **Quest Log:** Trả về 'questUpdate' với mục tiêu chính và nhiệm vụ hiện tại.
     5. **Inventory:** Nếu nhân vật có vật phẩm khởi đầu (gia bảo, vũ khí cơ bản), hãy trả về trong 'newItems'.
     
-    Hình ảnh: Cung cấp 'illustrationPrompt' tiếng Anh cho cảnh đầu tiên.
+    Hình ảnh: Cung cấp 'illustrationPrompt' tiếng Anh cho cảnh đầu tiên (Artistic fantasy style, no text, no gore).
     Khởi đầu: HP 100, Điểm 0.
   `;
 
@@ -445,17 +445,13 @@ export const generateImage = async (prompt: string): Promise<string | null> => {
                 parts: [{ text: "Fantasy RPG Art, Epic, Cinematic Lighting, High Resolution, Highly Detailed, Oil Painting Style: " + prompt }]
             },
             config: {
-                // Safety settings to allow fantasy combat/monsters
+                // IMPORTANT: BLOCK_NONE is required for RPG combat/monsters to be depicted
                 safetySettings: [
-                    { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
-                    { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
-                    { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
-                    { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
+                    { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                    { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                    { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+                    { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
                 ],
-                // Only use aspect ratio for supported models (Nano Banana 2 / Gemini 3 Pro)
-                // For flash-image (Nano Banana 1), aspectRatio might be ignored or default 1:1, 
-                // but let's try setting it for consistent API usage if supported.
-                // NOTE: imageConfig is currently supported in SDK for these models.
             }
         }));
 
