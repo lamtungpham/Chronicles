@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { GameState, TurnData, INITIAL_HP, WIN_SCORE, Item } from '../types';
 import { Button } from '../components/Button';
@@ -81,9 +80,26 @@ export const GameScreen: React.FC<GameScreenProps> = ({ gameState, setGameState 
                 return { ...prev, history: newHistory };
               });
               playSound('confirm'); // Magical chime when image appears
+            } else {
+               // Remove prompt if failed so we don't show loading forever
+               setGameState(prev => {
+                const newHistory = [...prev.history];
+                if (newHistory[index]) {
+                   newHistory[index] = { ...newHistory[index], imagePrompt: undefined };
+                }
+                return { ...prev, history: newHistory };
+              });
             }
           } catch (e) {
             console.error("Failed to generate in-game image", e);
+             // Remove prompt if failed so we don't show loading forever
+             setGameState(prev => {
+                const newHistory = [...prev.history];
+                if (newHistory[index]) {
+                   newHistory[index] = { ...newHistory[index], imagePrompt: undefined };
+                }
+                return { ...prev, history: newHistory };
+              });
           } finally {
             generatingImagesRef.current.delete(index);
           }
@@ -305,7 +321,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ gameState, setGameState 
 
           {/* Center: Title & Level */}
           <div className="flex flex-col items-center justify-center flex-1">
-            <h1 className="text-xl md:text-3xl font-black cinzel text-amber-500 tracking-widest text-glow drop-shadow-[0_2px_2px_rgba(0,0,0,1)] text-center hidden md:block">
+            <h1 className="text-xl md:text-3xl font-black font-serif text-amber-500 tracking-widest text-glow drop-shadow-[0_2px_2px_rgba(0,0,0,1)] text-center hidden md:block uppercase">
               CHRONICLES
             </h1>
             <div className="flex items-center gap-1 text-xs font-bold text-stone-500 uppercase tracking-widest bg-stone-950 px-2 py-0.5 rounded border border-stone-800">
@@ -330,7 +346,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ gameState, setGameState 
         {showInventory && (
           <div className="absolute top-16 left-2 z-50 w-72 bg-stone-900 border-2 border-stone-600 shadow-2xl rounded-lg animate-fade-in origin-top-left">
             <div className="p-3 border-b border-stone-700 bg-stone-800 flex justify-between items-center">
-              <h3 className="cinzel font-bold text-amber-500 flex items-center gap-2">
+              <h3 className="font-serif font-bold text-amber-500 flex items-center gap-2 uppercase">
                 <Backpack className="w-4 h-4" /> Hành Trang
               </h3>
               <span className="text-xs text-stone-400 font-mono">{gameState.inventory.length} món</span>
@@ -390,7 +406,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ gameState, setGameState 
                        <div className="flex justify-between items-start mb-2">
                           <div className="flex items-center gap-2 opacity-60">
                             <Feather className="w-4 h-4 text-amber-900" />
-                            <span className="text-xs font-bold text-amber-900/60 cinzel uppercase tracking-wider">Dungeon Master</span>
+                            <span className="text-xs font-bold text-amber-900/60 font-serif uppercase tracking-wider">Dungeon Master</span>
                           </div>
                           
                           {/* Audio Controls */}
@@ -464,7 +480,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ gameState, setGameState 
                   ) : (
                     <div className="max-w-[90%] md:max-w-[70%] relative mt-2 mb-4">
                       <div className="bg-stone-800 text-stone-100 p-3 md:p-5 rounded-lg shadow-[2px_2px_5px_rgba(0,0,0,0.3)] border border-stone-600 transform hover:scale-[1.01] transition-transform">
-                        <div className="text-sm md:text-base font-bold cinzel text-amber-400 italic mb-1 flex items-center gap-2 justify-end border-b border-stone-600 pb-1">
+                        <div className="text-sm md:text-base font-bold font-serif uppercase tracking-widest text-amber-400 italic mb-1 flex items-center gap-2 justify-end border-b border-stone-600 pb-1">
                           <Sparkles className="w-3 h-3 md:w-4 md:h-4" />
                           Hành động của bạn
                         </div>
@@ -509,7 +525,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ gameState, setGameState 
                         className="w-full relative group text-left px-3 py-2 md:px-4 md:py-3 bg-stone-800 hover:bg-stone-750 border-2 border-stone-700 hover:border-amber-600 rounded-lg shadow-lg hover:shadow-amber-900/20 transition-all duration-200 active:translate-y-1"
                       >
                          <div className="flex gap-3 items-center md:items-start">
-                            <span className="flex-shrink-0 w-6 h-6 md:w-8 md:h-8 flex items-center justify-center bg-stone-900 border border-stone-600 rounded font-bold cinzel text-amber-500 group-hover:text-amber-400 group-hover:border-amber-500 transition-colors text-sm md:text-base">
+                            <span className="flex-shrink-0 w-6 h-6 md:w-8 md:h-8 flex items-center justify-center bg-stone-900 border border-stone-600 rounded font-bold font-serif text-amber-500 group-hover:text-amber-400 group-hover:border-amber-500 transition-colors text-sm md:text-base">
                               {label}
                             </span>
                             <span className="text-sm md:text-lg text-stone-300 group-hover:text-stone-100 font-serif leading-tight">

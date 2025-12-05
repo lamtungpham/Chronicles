@@ -1,13 +1,12 @@
-
-import { GoogleGenAI, Type, Modality, GenerateContentResponse } from "@google/genai";
+import { GoogleGenAI, Type, Modality, GenerateContentResponse, HarmCategory, HarmBlockThreshold } from "@google/genai";
 import { Character, GameSettings, TurnData, InfographicData, HistoryItem, Item, Quest } from "../types";
 
 // Dynamic AI instance
 let ai: GoogleGenAI | null = null;
 
 // Default models
-let currentModelId = "gemini-2.5-flash"; // Mutable
-const IMAGE_MODEL_ID = "gemini-2.5-flash-image";
+let currentModelId = "gemini-2.5-flash"; // Text/Logic Model
+let currentImageModelId = "gemini-2.5-flash-image"; // Image Generation Model
 const TTS_MODEL_ID = "gemini-2.5-flash-preview-tts";
 
 // Initialize the AI client with the user's key
@@ -15,10 +14,13 @@ export const setApiKey = (apiKey: string) => {
   ai = new GoogleGenAI({ apiKey });
 };
 
-// Set the Game Master Model ID
-export const setGameModel = (modelId: string) => {
-  currentModelId = modelId;
-  console.log(`Game Master updated to: ${currentModelId}`);
+// Set the Game Master Model ID AND Image Model ID
+export const setGameModel = (textModelId: string, imageModelId?: string) => {
+  currentModelId = textModelId;
+  if (imageModelId) {
+    currentImageModelId = imageModelId;
+  }
+  console.log(`Game Master: ${currentModelId} | Artist: ${currentImageModelId}`);
 };
 
 // Check if AI is ready
@@ -415,18 +417,53 @@ export const generateInfographicData = async (
 
 export const generateImage = async (prompt: string): Promise<string | null> => {
   const client = ensureAiInitialized();
+  
+  // Choose safe configuration based on model
+  const isImagen = currentImageModelId.startsWith('imagen');
+  
+  console.log(`Generating image with: ${currentImageModelId}`);
+  
   try {
-    const response = await withRetry<GenerateContentResponse>(() => client.models.generateContent({
-      model: IMAGE_MODEL_ID,
-      contents: {
-        parts: [{ text: "Fantasy RPG Art, Epic, Cinematic Lighting, High Resolution, Highly Detailed, Oil Painting Style: " + prompt }]
-      }
-    }));
+    if (isImagen) {
+        // Imagen 3/4 config
+        const response = await withRetry<any>(() => client.models.generateImages({
+            model: currentImageModelId,
+            prompt: "Fantasy RPG Art, Epic, Digital Art, High Quality: " + prompt,
+            config: {
+                numberOfImages: 1,
+                aspectRatio: "16:9",
+                outputMimeType: "image/jpeg"
+            }
+        }));
+        const base64 = response.generatedImages?.[0]?.image?.imageBytes;
+        return base64 ? `data:image/jpeg;base64,${base64}` : null;
+    } else {
+        // Gemini 2.5 Flash / Pro Image config
+        const response = await withRetry<GenerateContentResponse>(() => client.models.generateContent({
+            model: currentImageModelId,
+            contents: {
+                parts: [{ text: "Fantasy RPG Art, Epic, Cinematic Lighting, High Resolution, Highly Detailed, Oil Painting Style: " + prompt }]
+            },
+            config: {
+                // Safety settings to allow fantasy combat/monsters
+                safetySettings: [
+                    { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
+                    { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
+                    { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
+                    { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
+                ],
+                // Only use aspect ratio for supported models (Nano Banana 2 / Gemini 3 Pro)
+                // For flash-image (Nano Banana 1), aspectRatio might be ignored or default 1:1, 
+                // but let's try setting it for consistent API usage if supported.
+                // NOTE: imageConfig is currently supported in SDK for these models.
+            }
+        }));
 
-    for (const part of response.candidates?.[0]?.content?.parts || []) {
-      if (part.inlineData) {
-        return `data:image/png;base64,${part.inlineData.data}`;
-      }
+        for (const part of response.candidates?.[0]?.content?.parts || []) {
+            if (part.inlineData) {
+                return `data:image/png;base64,${part.inlineData.data}`;
+            }
+        }
     }
     return null;
   } catch (error) {

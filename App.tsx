@@ -36,11 +36,11 @@ const App: React.FC = () => {
     setHasApiKey(true);
   };
 
-  const handleStartGame = async (character: Character, settings: GameSettings, modelId: string) => {
+  const handleStartGame = async (character: Character, settings: GameSettings, modelId: string, imageModelId: string) => {
     setIsLoading(true);
     try {
-      // Set the selected model
-      setGameModel(modelId);
+      // Set the selected models
+      setGameModel(modelId, imageModelId);
 
       // Initialize with AI
       const turnData = await startGame(character, settings);

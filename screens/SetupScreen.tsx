@@ -1,12 +1,11 @@
-
 import React, { useState } from 'react';
 import { Character, GameSettings } from '../types';
 import { Button } from '../components/Button';
-import { Sparkles, Map, Shield, User, Globe, Cpu } from 'lucide-react';
+import { Sparkles, Map, Shield, User, Globe, Cpu, ImageIcon } from 'lucide-react';
 import { playSound } from '../services/audioFxService';
 
 interface SetupScreenProps {
-  onStart: (char: Character, settings: GameSettings, modelId: string) => void;
+  onStart: (char: Character, settings: GameSettings, modelId: string, imageModelId: string) => void;
   isLoading: boolean;
 }
 
@@ -20,7 +19,7 @@ interface InputFieldProps {
 
 const InputField: React.FC<InputFieldProps> = ({ label, value, onChange, placeholder, suggestions }) => (
   <div className="mb-4 group relative z-10">
-    <label className="block text-sm font-bold text-amber-500 mb-1 uppercase tracking-wider font-serif group-focus-within:text-amber-300 transition-colors drop-shadow-md">
+    <label className="block text-sm font-black text-amber-500 mb-1 uppercase tracking-wider font-serif group-focus-within:text-amber-300 transition-colors drop-shadow-md">
       {label}
     </label>
     <input 
@@ -28,7 +27,7 @@ const InputField: React.FC<InputFieldProps> = ({ label, value, onChange, placeho
       value={value}
       onChange={(e) => onChange(e.target.value)}
       onFocus={() => playSound('hover')}
-      className="w-full bg-stone-950/60 border border-stone-600 rounded-md p-3 text-white placeholder-stone-500 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none transition-all shadow-inner backdrop-blur-sm"
+      className="w-full bg-stone-950/60 border border-stone-600 rounded-md p-3 text-white placeholder-stone-500 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none transition-all shadow-inner backdrop-blur-sm font-serif"
       placeholder={placeholder}
     />
     {suggestions && (
@@ -42,7 +41,7 @@ const InputField: React.FC<InputFieldProps> = ({ label, value, onChange, placeho
               onChange(s);
             }}
             onMouseEnter={() => playSound('hover')}
-            className="text-xs bg-stone-900/80 hover:bg-amber-900/60 text-stone-400 hover:text-amber-200 border border-stone-700 hover:border-amber-600 px-2 py-1 rounded-sm transition-all active:scale-95 backdrop-blur-md"
+            className="text-xs bg-stone-900/80 hover:bg-amber-900/60 text-stone-400 hover:text-amber-200 border border-stone-700 hover:border-amber-600 px-2 py-1 rounded-sm transition-all active:scale-95 backdrop-blur-md font-serif font-bold"
           >
             {s}
           </button>
@@ -67,12 +66,13 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ onStart, isLoading }) 
   });
 
   const [selectedModel, setSelectedModel] = useState<string>('gemini-2.5-flash');
+  const [selectedImageModel, setSelectedImageModel] = useState<string>('gemini-2.5-flash-image');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isLoading) {
       playSound('confirm');
-      onStart(character, settings, selectedModel);
+      onStart(character, settings, selectedModel, selectedImageModel);
     }
   };
 
@@ -88,12 +88,12 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ onStart, isLoading }) 
 
       <div className="text-center mb-12 relative z-10 group cursor-default">
         <div className="absolute -inset-14 bg-amber-500/10 blur-3xl rounded-full z-0 group-hover:bg-amber-500/20 transition-colors duration-1000"></div>
-        <h1 className="relative z-10 text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-b from-amber-200 via-amber-500 to-amber-700 drop-shadow-[0_4px_10px_rgba(0,0,0,0.9)] cinzel select-none tracking-tight">
+        <h1 className="relative z-10 text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-b from-amber-200 via-amber-500 to-amber-700 drop-shadow-[0_4px_10px_rgba(0,0,0,0.9)] font-serif tracking-tight uppercase">
           CHRONICLES
         </h1>
         <div className="flex items-center justify-center gap-4 mt-2">
             <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-amber-500/50"></div>
-            <p className="text-stone-400 text-lg md:text-xl font-serif italic tracking-widest uppercase cinzel select-none text-glow">
+            <p className="text-stone-400 text-lg md:text-xl font-serif italic tracking-widest uppercase text-glow font-bold">
               Kiến tạo huyền thoại
             </p>
             <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-amber-500/50"></div>
@@ -120,7 +120,7 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ onStart, isLoading }) 
                 <Shield className="text-amber-100 w-8 h-8 drop-shadow-md" />
               </div>
               <div>
-                <h2 className="text-3xl font-bold text-amber-100 font-serif leading-none uppercase tracking-wide">NHÂN VẬT</h2>
+                <h2 className="text-3xl font-black text-amber-100 font-serif leading-none uppercase tracking-wide">NHÂN VẬT</h2>
                 <span className="text-xs text-amber-500/60 uppercase tracking-widest font-bold">Người hùng của câu chuyện</span>
               </div>
             </div>
@@ -151,13 +151,13 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ onStart, isLoading }) 
               </div>
 
               <div className="group/area relative z-10">
-                <label className="block text-sm font-bold text-amber-500 mb-1 uppercase tracking-wider font-serif drop-shadow-md">TIỂU SỬ & QUÁ KHỨ</label>
+                <label className="block text-sm font-black text-amber-500 mb-1 uppercase tracking-wider font-serif drop-shadow-md">TIỂU SỬ & QUÁ KHỨ</label>
                 <textarea 
                   rows={3}
                   value={character.background}
                   onChange={e => setCharacter({...character, background: e.target.value})}
                   onFocus={() => playSound('hover')}
-                  className="w-full bg-stone-950/60 border border-stone-600 rounded-md p-3 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none transition-all shadow-inner backdrop-blur-sm"
+                  className="w-full bg-stone-950/60 border border-stone-600 rounded-md p-3 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none transition-all shadow-inner backdrop-blur-sm font-serif"
                 />
               </div>
             </div>
@@ -182,7 +182,7 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ onStart, isLoading }) 
                 <Map className="text-indigo-100 w-8 h-8 drop-shadow-md" />
               </div>
               <div>
-                <h2 className="text-3xl font-bold text-indigo-100 font-serif leading-none uppercase tracking-wide">THẾ GIỚI</h2>
+                <h2 className="text-3xl font-black text-indigo-100 font-serif leading-none uppercase tracking-wide">THẾ GIỚI</h2>
                  <span className="text-xs text-indigo-400/60 uppercase tracking-widest font-bold">Nơi huyền thoại bắt đầu</span>
               </div>
             </div>
@@ -205,38 +205,57 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ onStart, isLoading }) 
               />
 
               <div className="group/area relative z-10">
-                <label className="block text-sm font-bold text-amber-500 mb-1 uppercase tracking-wider font-serif drop-shadow-md">CHI TIẾT KHỞI ĐẦU (TÙY CHỌN)</label>
+                <label className="block text-sm font-black text-amber-500 mb-1 uppercase tracking-wider font-serif drop-shadow-md">CHI TIẾT KHỞI ĐẦU (TÙY CHỌN)</label>
                 <textarea 
-                  rows={3}
+                  rows={2}
                   value={settings.customPrompt}
                   onChange={e => setSettings({...settings, customPrompt: e.target.value})}
                   onFocus={() => playSound('hover')}
                   placeholder="Bạn tỉnh dậy ở đâu? Trong ngục tối ẩm ướt hay trên tàu vũ trụ đang cháy?..."
-                  className="w-full bg-stone-950/60 border border-stone-600 rounded-md p-3 text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all shadow-inner backdrop-blur-sm"
+                  className="w-full bg-stone-950/60 border border-stone-600 rounded-md p-3 text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all shadow-inner backdrop-blur-sm font-serif"
                 />
               </div>
 
-              {/* Model Selection */}
-              <div className="group/model relative z-10">
-                <label className="block text-sm font-bold text-amber-500 mb-1 uppercase tracking-wider font-serif drop-shadow-md flex items-center gap-2">
-                  <Cpu className="w-4 h-4" /> AI GAME MASTER (MODEL)
-                </label>
-                <select
-                  value={selectedModel}
-                  onChange={(e) => {
-                    playSound('click');
-                    setSelectedModel(e.target.value);
-                  }}
-                  onFocus={() => playSound('hover')}
-                  className="w-full bg-stone-950/60 border border-stone-600 rounded-md p-3 text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all shadow-inner backdrop-blur-sm cursor-pointer appearance-none"
-                >
-                  <option value="gemini-2.5-flash">Gemini 2.5 Flash (Cân bằng - Khuyên dùng)</option>
-                  <option value="gemini-2.0-flash-lite-preview-02-05">Gemini 2.0 Flash Lite (Tốc độ cao)</option>
-                  <option value="gemini-2.0-pro-exp-02-05">Gemini 2.0 Pro Exp (Thông minh nhất - Storytelling)</option>
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-stone-400 mt-6">
-                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                </div>
+              {/* Text Model Selection */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="group/model relative z-10">
+                    <label className="block text-xs font-black text-amber-500 mb-1 uppercase tracking-wider font-serif drop-shadow-md flex items-center gap-2">
+                      <Cpu className="w-3 h-3" /> Dungeon Master (Text)
+                    </label>
+                    <select
+                      value={selectedModel}
+                      onChange={(e) => {
+                        playSound('click');
+                        setSelectedModel(e.target.value);
+                      }}
+                      onFocus={() => playSound('hover')}
+                      className="w-full bg-stone-950/60 border border-stone-600 rounded-md p-2 text-white text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all shadow-inner backdrop-blur-sm cursor-pointer font-serif"
+                    >
+                      <option value="gemini-2.5-flash">Gemini 2.5 Flash (Chuẩn)</option>
+                      <option value="gemini-2.0-flash-lite-preview-02-05">Flash Lite 2.0 (Nhanh)</option>
+                      <option value="gemini-2.0-pro-exp-02-05">Pro Exp 2.0 (Thông minh)</option>
+                    </select>
+                  </div>
+
+                  {/* Image Model Selection */}
+                  <div className="group/model relative z-10">
+                    <label className="block text-xs font-black text-indigo-400 mb-1 uppercase tracking-wider font-serif drop-shadow-md flex items-center gap-2">
+                      <ImageIcon className="w-3 h-3" /> Họa Sĩ (Image)
+                    </label>
+                    <select
+                      value={selectedImageModel}
+                      onChange={(e) => {
+                        playSound('click');
+                        setSelectedImageModel(e.target.value);
+                      }}
+                      onFocus={() => playSound('hover')}
+                      className="w-full bg-stone-950/60 border border-stone-600 rounded-md p-2 text-white text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all shadow-inner backdrop-blur-sm cursor-pointer font-serif"
+                    >
+                      <option value="gemini-2.5-flash-image">Gemini 2.5 Flash Img (Ổn định)</option>
+                      <option value="gemini-3-pro-image-preview">Gemini 3 Pro Img (Cao cấp)</option>
+                      <option value="imagen-4.0-generate-001">Imagen 4 (Chuyên dụng)</option>
+                    </select>
+                  </div>
               </div>
 
             </div>
@@ -251,7 +270,7 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ onStart, isLoading }) 
             className="w-full md:w-2/3 text-xl py-5 shadow-[0_0_40px_rgba(245,158,11,0.2)] hover:shadow-[0_0_60px_rgba(245,158,11,0.4)] border-2 border-amber-500/60 bg-amber-800/80 hover:bg-amber-700 backdrop-blur-sm"
           >
             <Sparkles className="w-6 h-6 mr-3 animate-pulse text-amber-200" />
-            <span className="drop-shadow-md uppercase font-serif font-bold tracking-wider">BẮT ĐẦU CUỘC PHIÊU LƯU</span>
+            <span className="drop-shadow-md uppercase font-serif font-black tracking-wider">BẮT ĐẦU CUỘC PHIÊU LƯU</span>
           </Button>
         </div>
       </form>

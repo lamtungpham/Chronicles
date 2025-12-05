@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { GameState, InfographicData } from '../types';
 import { Button } from '../components/Button';
@@ -99,7 +98,7 @@ export const EndScreen: React.FC<EndScreenProps> = ({ gameState, onRestart }) =>
                 </>
               ) : (
                 <div className="flex items-center justify-center h-full text-stone-500 bg-stone-900">
-                  <span className="cinzel text-2xl opacity-30">NO IMAGE FOUND</span>
+                  <span className="font-serif font-black uppercase text-2xl opacity-30">NO IMAGE FOUND</span>
                 </div>
               )}
               
@@ -211,7 +210,7 @@ export const EndScreen: React.FC<EndScreenProps> = ({ gameState, onRestart }) =>
             </div>
 
             {/* Title */}
-            <h1 className="text-4xl md:text-5xl font-black font-serif mb-2 text-center text-transparent bg-clip-text bg-gradient-to-b from-white to-stone-400">
+            <h1 className="text-4xl md:text-5xl font-black font-serif mb-2 text-center text-transparent bg-clip-text bg-gradient-to-b from-white to-stone-400 uppercase">
             {isVictory ? 'CHIẾN THẮNG VINH QUANG' : 'CÁI CHẾT'}
             </h1>
             
@@ -236,11 +235,11 @@ export const EndScreen: React.FC<EndScreenProps> = ({ gameState, onRestart }) =>
             <div className="flex gap-4 mb-8">
                 <div className="flex-1 bg-stone-950/50 rounded p-3 border border-stone-800 text-center">
                     <span className="block text-[10px] uppercase text-stone-500 font-bold mb-1">Danh Vọng</span>
-                    <span className="text-2xl font-bold text-amber-500 cinzel">{gameState.score}</span>
+                    <span className="text-2xl font-bold text-amber-500 font-serif">{gameState.score}</span>
                 </div>
                 <div className="flex-1 bg-stone-950/50 rounded p-3 border border-stone-800 text-center">
                     <span className="block text-[10px] uppercase text-stone-500 font-bold mb-1">Số lượt đi</span>
-                    <span className="text-2xl font-bold text-indigo-400 cinzel">{Math.ceil(gameState.history.length / 2)}</span>
+                    <span className="text-2xl font-bold text-indigo-400 font-serif">{Math.ceil(gameState.history.length / 2)}</span>
                 </div>
             </div>
 

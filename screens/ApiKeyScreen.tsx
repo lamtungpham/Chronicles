@@ -36,7 +36,7 @@ export const ApiKeyScreen: React.FC<ApiKeyScreenProps> = ({ onSubmit }) => {
               </div>
             </div>
 
-            <h1 className="text-3xl font-black cinzel text-center text-amber-100 mb-2">
+            <h1 className="text-3xl font-black font-serif uppercase tracking-wider text-center text-amber-100 mb-2">
               GATEKEEPER
             </h1>
             <p className="text-center text-stone-400 font-serif italic mb-8 text-sm">
@@ -45,7 +45,7 @@ export const ApiKeyScreen: React.FC<ApiKeyScreenProps> = ({ onSubmit }) => {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-xs font-bold text-amber-600 uppercase tracking-widest mb-2 cinzel">
+                <label className="block text-xs font-bold text-amber-600 uppercase tracking-widest mb-2 font-serif">
                   Nhập API Key
                 </label>
                 <input 
