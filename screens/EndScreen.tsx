@@ -75,7 +75,7 @@ export const EndScreen: React.FC<EndScreenProps> = ({ gameState, onRestart }) =>
                 <div className="absolute inset-0 bg-amber-500/20 blur-xl rounded-full animate-spin [animation-duration:3s]"></div>
                 <Loader2 className="w-16 h-16 text-amber-500 animate-spin relative z-10" />
             </div>
-            <h2 className="text-2xl font-bold cinzel text-amber-100 mb-2">{loadingStep}</h2>
+            <h2 className="text-2xl font-bold font-serif text-amber-100 mb-2">{loadingStep}</h2>
             <p className="text-stone-500 font-serif italic max-w-md">Quá trình này có thể mất khoảng 10-15 giây để AI sáng tạo...</p>
          </div>
       </div>
@@ -104,7 +104,7 @@ export const EndScreen: React.FC<EndScreenProps> = ({ gameState, onRestart }) =>
               )}
               
               <div className="absolute bottom-0 left-0 right-0 p-8 text-center pb-12 z-10">
-                 <h1 className="text-3xl md:text-5xl font-black cinzel text-stone-900 drop-shadow-sm mb-2 leading-tight uppercase">
+                 <h1 className="text-3xl md:text-5xl font-black font-serif text-stone-900 drop-shadow-sm mb-2 leading-tight uppercase">
                    {infographic.title}
                  </h1>
                  <p className="text-stone-800 font-serif italic text-lg md:text-xl font-bold bg-[#e8dcc6]/80 inline-block px-4 py-1 rounded-sm shadow-sm">
@@ -127,8 +127,8 @@ export const EndScreen: React.FC<EndScreenProps> = ({ gameState, onRestart }) =>
                               <Icon className="w-6 h-6" />
                            </div>
                         </div>
-                        <div className="text-xs uppercase font-bold text-stone-600 cinzel tracking-wider">{stat.label}</div>
-                        <div className="text-xl md:text-2xl font-black text-stone-900 cinzel mt-1">{stat.value}</div>
+                        <div className="text-xs uppercase font-bold text-stone-600 font-serif tracking-wider">{stat.label}</div>
+                        <div className="text-xl md:text-2xl font-black text-stone-900 font-serif mt-1">{stat.value}</div>
                      </div>
                    );
                  })}
@@ -136,7 +136,7 @@ export const EndScreen: React.FC<EndScreenProps> = ({ gameState, onRestart }) =>
 
               {/* Timeline */}
               <div className="relative pl-4 md:pl-8">
-                 <h3 className="text-2xl font-bold cinzel text-stone-900 mb-8 border-b-2 border-stone-800/30 inline-block pb-2">
+                 <h3 className="text-2xl font-bold font-serif uppercase tracking-widest text-stone-900 mb-8 border-b-2 border-stone-800/30 inline-block pb-2">
                    Dòng Thời Gian
                  </h3>
                  
@@ -150,7 +150,7 @@ export const EndScreen: React.FC<EndScreenProps> = ({ gameState, onRestart }) =>
                          <div className="absolute left-[calc(1rem-7px)] md:left-[calc(2rem-7px)] top-1 w-4 h-4 rounded-full bg-stone-800 border-2 border-[#e8dcc6] z-10 shadow-sm"></div>
                          
                          <div className="bg-white/40 p-4 rounded-lg border border-stone-800/10 shadow-sm hover:bg-white/60 transition-colors">
-                            <span className="text-xs font-bold text-amber-800 cinzel">CHƯƠNG {event.turnIndex}</span>
+                            <span className="text-xs font-bold text-amber-800 font-serif uppercase tracking-wider">CHƯƠNG {event.turnIndex}</span>
                             <h4 className="text-lg font-bold text-stone-900 font-serif mt-1">{event.title}</h4>
                             <p className="text-stone-800 mt-2 leading-relaxed text-sm md:text-base">{event.description}</p>
                          </div>
@@ -166,7 +166,7 @@ export const EndScreen: React.FC<EndScreenProps> = ({ gameState, onRestart }) =>
                  <p className="font-serif italic text-lg leading-loose text-stone-300">
                    "{infographic.finalThought}"
                  </p>
-                 <div className="mt-4 font-bold cinzel text-amber-500 text-sm tracking-widest uppercase">- Dungeon Master -</div>
+                 <div className="mt-4 font-bold font-serif text-amber-500 text-sm tracking-widest uppercase">- Dungeon Master -</div>
               </div>
 
               {/* Footer Actions */}
@@ -211,7 +211,7 @@ export const EndScreen: React.FC<EndScreenProps> = ({ gameState, onRestart }) =>
             </div>
 
             {/* Title */}
-            <h1 className="text-4xl md:text-5xl font-black cinzel mb-2 text-center text-transparent bg-clip-text bg-gradient-to-b from-white to-stone-400">
+            <h1 className="text-4xl md:text-5xl font-black font-serif mb-2 text-center text-transparent bg-clip-text bg-gradient-to-b from-white to-stone-400">
             {isVictory ? 'CHIẾN THẮNG VINH QUANG' : 'CÁI CHẾT'}
             </h1>
             
