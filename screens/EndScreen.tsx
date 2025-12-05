@@ -103,10 +103,10 @@ export const EndScreen: React.FC<EndScreenProps> = ({ gameState, onRestart }) =>
               )}
               
               <div className="absolute bottom-0 left-0 right-0 p-8 text-center pb-12 z-10">
-                 <h1 className="text-3xl md:text-5xl font-black font-serif text-stone-900 drop-shadow-sm mb-2 leading-tight uppercase">
+                 <h1 className="text-4xl md:text-6xl font-black font-serif text-transparent bg-clip-text bg-gradient-to-br from-amber-800 to-red-900 drop-shadow-[0_2px_0_rgba(255,255,255,0.6)] mb-4 leading-tight uppercase tracking-tight">
                    {infographic.title}
                  </h1>
-                 <p className="text-stone-800 font-serif italic text-lg md:text-xl font-bold bg-[#e8dcc6]/80 inline-block px-4 py-1 rounded-sm shadow-sm">
+                 <p className="text-stone-900 font-serif italic text-lg md:text-xl font-bold bg-white/60 inline-block px-6 py-2 rounded-sm shadow-lg backdrop-blur-md border border-stone-900/10">
                    {infographic.subTitle}
                  </p>
               </div>
