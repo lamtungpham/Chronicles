@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type, Modality, GenerateContentResponse } from "@google/genai";
 import { Character, GameSettings, TurnData, InfographicData, HistoryItem, Item, Quest } from "../types";
 
@@ -269,7 +270,8 @@ async function decodeAudioData(
   numChannels: number,
 ): Promise<AudioBuffer> {
   try {
-      const bufferCopy = data.buffer.slice(0);
+      // Fix TS Error: explicitly cast to ArrayBuffer
+      const bufferCopy = data.buffer.slice(0) as ArrayBuffer;
       return await ctx.decodeAudioData(bufferCopy);
   } catch (e) {
       const dataInt16 = new Int16Array(data.buffer);

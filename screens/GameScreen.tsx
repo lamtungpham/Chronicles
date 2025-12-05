@@ -144,18 +144,20 @@ export const GameScreen: React.FC<GameScreenProps> = ({ gameState, setGameState 
     setLoadingAudioIndex(index);
 
     try {
-      let audioBuffer = audioCache.current.get(text);
+      // Fix TS Error: Explicitly handle type union or use temp variable
+      let bufferToPlay: AudioBuffer | undefined | null = audioCache.current.get(text);
 
-      if (!audioBuffer) {
-        audioBuffer = await generateSpeech(text);
-        if (audioBuffer) {
-           audioCache.current.set(text, audioBuffer);
+      if (!bufferToPlay) {
+        const generatedBuffer = await generateSpeech(text);
+        if (generatedBuffer) {
+           audioCache.current.set(text, generatedBuffer);
+           bufferToPlay = generatedBuffer;
         }
       }
 
-      if (audioBuffer && audioContextRef.current) {
+      if (bufferToPlay && audioContextRef.current) {
         const source = audioContextRef.current.createBufferSource();
-        source.buffer = audioBuffer;
+        source.buffer = bufferToPlay;
         source.playbackRate.value = playbackSpeed;
         source.connect(audioContextRef.current.destination);
         
