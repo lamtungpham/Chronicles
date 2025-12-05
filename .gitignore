@@ -7,18 +7,16 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Node modules
 node_modules
-dist
-dist-ssr
-*.local
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# Python
+__pycache__
+*.pyc
+
+# OS
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+
+# Note: We DO NOT ignore 'dist' here because for simple Streamlit Cloud deployment
+# without a custom build pipeline, it is easier to commit the built assets.
+# If you have a CI/CD pipeline, add dist to .gitignore.
