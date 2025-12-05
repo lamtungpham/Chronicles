@@ -32,8 +32,8 @@ const ensureAiInitialized = () => {
 };
 
 // --- RETRY LOGIC ---
-const MAX_RETRIES = 3;
-const INITIAL_BACKOFF_MS = 2000; // Start waiting 2 seconds
+const MAX_RETRIES = 5; // Increased retries for stability
+const INITIAL_BACKOFF_MS = 4000; // Increased initial wait time
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -42,19 +42,23 @@ const withRetry = async <T>(fn: () => Promise<T>, retries = MAX_RETRIES): Promis
     return await fn();
   } catch (error: any) {
     // Check for Rate Limit (429) or Service Unavailable (503)
+    // Deep check for nested error structures often returned by Google APIs
+    const errorCode = error?.status || error?.code || error?.error?.code || error?.response?.status;
+    const errorMessage = error?.message || error?.error?.message || JSON.stringify(error);
+    const errorStatus = error?.status || error?.error?.status;
+
     const isRateLimit = 
-      error?.status === 429 || 
-      error?.code === 429 || 
-      error?.status === 'RESOURCE_EXHAUSTED' ||
-      (error?.message && (
-        error.message.includes('429') || 
-        error.message.includes('RESOURCE_EXHAUSTED') || 
-        error.message.includes('Quota')
-      )) ||
-      error?.status === 503;
+      errorCode === 429 || 
+      errorCode === 503 ||
+      errorStatus === 'RESOURCE_EXHAUSTED' ||
+      (typeof errorMessage === 'string' && (
+        errorMessage.includes('429') || 
+        errorMessage.includes('RESOURCE_EXHAUSTED') || 
+        errorMessage.includes('Quota')
+      ));
 
     if (isRateLimit && retries > 0) {
-      // Calculate delay: 2s, 4s, 8s... + jitter to prevent thundering herd
+      // Exponential backoff with jitter
       const delay = INITIAL_BACKOFF_MS * Math.pow(2, MAX_RETRIES - retries) + (Math.random() * 1000);
       console.warn(`API Rate Limited (429). Retrying in ${Math.round(delay)}ms... (${retries} retries left)`);
       await wait(delay);
@@ -169,7 +173,7 @@ export const startGame = async (character: Character, settings: GameSettings): P
     4. **Quest Log:** Trả về 'questUpdate' với mục tiêu chính và nhiệm vụ hiện tại.
     5. **Inventory:** Nếu nhân vật có vật phẩm khởi đầu (gia bảo, vũ khí cơ bản), hãy trả về trong 'newItems'.
     
-    Hình ảnh: Cung cấp 'illustrationPrompt' tiếng Anh cho cảnh đầu tiên (Artistic fantasy style, no text, no gore).
+    Hình ảnh: Cung cấp 'illustrationPrompt' tiếng Anh cho cảnh đầu tiên (Safe for work, artistic fantasy style description, no gore).
     Khởi đầu: HP 100, Điểm 0.
   `;
 
